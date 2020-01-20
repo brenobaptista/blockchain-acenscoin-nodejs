@@ -7,10 +7,11 @@ class Transaction {
     this.fromAdress = fromAdress;
     this.toAddress = toAddress;
     this.amount = amount;
+    this.timestamp = Date.now();
   }
 
   calculateHash() {
-    return SHA256(this.fromAdress + this.toAddress + this.amount).toString();
+    return SHA256(this.fromAdress + this.toAddress + this.amount + this.timestamp).toString();
   }
 
   signTransaction(signingKey) {
@@ -78,7 +79,7 @@ class Block {
 class Blockchain {
   constructor() {
     this.chain = [this.createGenesisBlock()];
-    this.difficulty = 3;
+    this.difficulty = 4;
     this.pendingTransactions = [];
     this.miningReward = 100;
   }
@@ -113,6 +114,10 @@ class Blockchain {
       throw new Error("Cannot add invalid transaction to chain");
     }
 
+    if (transaction.amount < 0) {
+      throw new Error('Transaction amount should be higher than 0');
+    }
+
     this.pendingTransactions.push(transaction);
   }
 
@@ -132,6 +137,21 @@ class Blockchain {
     }
 
     return balance;
+  }
+
+  getAllTransactionsForWallet(address) {
+    const txs = [];
+
+    for (const block of this.chain) {
+      for (const tx of block.transactions) {
+        if (tx.fromAddress === address || tx.toAddress === address) {
+          txs.push(tx);
+        }
+      }
+    }
+
+    console.log('How many transactions for this wallet?', txs.length);
+    return txs;
   }
 
   isChainValid() {

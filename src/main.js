@@ -9,10 +9,6 @@ const myWalletAddress = myKey.getPublic("hex");
 
 let acensCoin = new Blockchain();
 
-const tx1 = new Transaction(myWalletAddress, "public key goes here", 10);
-tx1.signTransaction(myKey);
-acensCoin.addTransaction(tx1);
-
 console.log("Starting the miner...");
 acensCoin.minePendingTransactions(myWalletAddress);
 
@@ -20,5 +16,13 @@ console.log(
   "Balance of breno is ",
   acensCoin.getBalanceOfAddress(myWalletAddress)
 );
+
+console.log('Starting transaction for 10 AcensCoins');
+
+const tx1 = new Transaction(myWalletAddress, "public key goes here", 10);
+tx1.signTransaction(myKey);
+acensCoin.addTransaction(tx1);
+
+acensCoin.getAllTransactionsForWallet(myWalletAddress);
 
 console.log("Is chain valid? ", acensCoin.isChainValid() ? 'Yes' : 'No');
